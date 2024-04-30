@@ -1,18 +1,31 @@
 
 function drawIt() {
+    $('#pauza').on("click", (event) => {pause();});
+    $("#koncaj").on("click",(e)=>{end();});
+    $(document).keyup((e)=>{if(e.keyCode == 27){pause();}}); 
     
     function init() {
+        //lc.scores="";
+        if(lc.scores==null||lc.scores.length==0)lc.setObj("scores",[{t:0,s:0}]);
+        //console.log(lc);
+        //console.log(typeof lc.getObj("scores"));
         ctx = $('#canvas')[0].getContext("2d");
         WIDTH = $("#canvas").width();
         HEIGHT = $("#canvas").height();
-        x = WIDTH/4 + 50;//zogica in canvas
-        y = 140//HEIGHT/2;
-        dx = 2;
-        dy = 4;
-        r = 10;
+        r = 7;
+        bl =[{x:WIDTH/2 + 50,y:HEIGHT - r,dx:0,dy:0}];
+        x=bl[0].x;
+        y=bl[0].y;
+//        dx = 1;
+//        dy = 2;
+        waitPull();
         tocke = 0;
         $("#tocke").html(tocke);
-        return setInterval(draw, 10);
+        sekunde = 0;
+        izpisTimer = "00:00";
+        timer();
+        intTimer = setInterval(timer, 1000);
+        return setInterval(draw, 5);
     }
 
     function init_paddle() {
@@ -22,35 +35,63 @@ function drawIt() {
     }
     function init_mouse() {
         canvasMinX = $("canvas").offset().left;
+        canvasMinY = $("canvas").offset().top;
         canvasMaxX = canvasMinX + WIDTH;
     }
     function initbricks() { //inicializacija opek - polnjenje v tabelo
+        PADDING = 2;
+        //var bc=Math.floor(WIDTH/(50-PADDING));
+        
+//        NROWS = 4;
+//        NCOLS = 7;
         NROWS = 5;
-        NCOLS = 7;
-        BRICKWIDTH = (WIDTH/NCOLS) - 1;
-        BRICKHEIGHT = 15;
-        PADDING = 50;
+        NCOLS = 10;
+        BRICKWIDTH = (WIDTH/NCOLS-PADDING) - 1;
+        BRICKHEIGHT = BRICKWIDTH;
         BRICKTOP = 20;
+        BRICKLEFT = (WIDTH - (BRICKWIDTH+PADDING)*NCOLS)/2;
         rsOblak = false;
-        bricks = new Array(NROWS);
-        for (i=0; i < NROWS; i++) {
-            bricks[i] = new Array(NCOLS);
-            for (j=0; j < NCOLS; j++) {
-                bricks[i][j] = {h:1,v:1};
-            }
-        }
+        bricks = [];
+        genBricks(bricks, NROWS, 0.2, lvl, lvl);
     }
     
-    var intervalId = init();
+    intervalId = init();
     init_paddle();
     init_mouse();
     initbricks();
     
     
     function draw() {
+        //if(!playing)return;
+        if(beamset&&!grabing&&!flying){
+            dy=2*Math.cos(beamangle);
+            dx=2*Math.sin(beamangle);
+            var scalr=Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+            var absp= sp/(scalr==0?1:scalr);
+            dx*=absp;
+            dy*=absp;
+            beamset=false;
+            flying=true;
+        }
         clear();
-        circle(x, y, 10);
-        //premik ploöËice levo in desno
+        
+        for(var i=0;i<bl.length;i++){
+            x=bl[i].x;
+            y=bl[i].y;
+            dx=bl[i].dx;
+            dy=bl[i].dy;
+            
+        }
+        circle(x, y, r,"#8080a0");
+        
+//        var fx =-100;
+//        var fy= -50;
+//        var fa = Math.atan2(fx,fy);//-Math.PI/2;
+//        drawBeam(20, {x:400,y:400}, fa);
+//        drawBeam(10, {x:500,y:400}, Math.PI/4);
+//        drawBeam(15, {x:500,y:400}, Math.PI/2);
+//        drawBeam(20, {x:500,y:400}, Math.PI*3/4);
+        //premik plo≈°ƒçice levo in desno
         if(rightDown){
             if((paddlex+paddlew) < WIDTH){
                 paddlex += 5;
@@ -68,65 +109,197 @@ function drawIt() {
         }
         rect(paddlex, HEIGHT-paddleh, paddlew, paddleh);
         
-        //riöi opeke
+        //ri≈°i opeke
         for (i=0; i < NROWS; i++) {
             for (j=0; j < NCOLS; j++) {
-                if (bricks[i][j].h > 0) {
-                    ctx.fillStyle="#954a00";
-                    rect((j * (BRICKWIDTH + PADDING)) + PADDING, (i * (BRICKHEIGHT + PADDING)) + PADDING + BRICKTOP, BRICKWIDTH, BRICKHEIGHT);
+                var xs = (j * (BRICKWIDTH + PADDING)) + PADDING + BRICKLEFT;
+                var ys = (i * (BRICKHEIGHT + PADDING)) + PADDING + BRICKTOP;
+                if (bricks[i][j].b > 0) {
+                    var proc = (bricks[i][j].b)/bricks[i][j].h;
+                    var c=HSVtoRGB((1*(1-bricks[i][j].h/100)),1,1);
+                    //ctx.fillStyle="HSL("+Math.floor((100*(1-bricks[i][j].h/maxHard))%100)+", 255, 255)";
+                    //if(Math.random()<0.001)console.log(""+c.r+", "+c.g+", "+c.b+"");
+                    ctx.fillStyle="rgb("+c.r+", "+c.g+", "+c.b+")";
+                    rect(xs, ys, BRICKWIDTH, BRICKHEIGHT);
+                    ctx.font=BRICKHEIGHT+"px sans-serif";
+                    var txm = ctx.measureText(bricks[i][j].b);
+                    ctx.font=BRICKHEIGHT*BRICKWIDTH/txm.width+"px sans-serif";
+                    if(BRICKHEIGHT*BRICKWIDTH/txm.width>BRICKHEIGHT)
+                        ctx.font=BRICKHEIGHT*0.9+"px sans-serif";
+                    
+                    txm = ctx.measureText(bricks[i][j].b);
+                    ctx.fillStyle="white";
+                    ctx.strokeText(bricks[i][j].b, xs+(BRICKWIDTH-txm.width)/2, ys+BRICKHEIGHT*7/8 ,BRICKWIDTH*0.95);
+                    ctx.fillStyle="black";
+                    ctx.fillText(bricks[i][j].b, xs+(BRICKWIDTH-txm.width)/2, ys+BRICKHEIGHT*7/8 ,BRICKWIDTH*0.95);
+                    var sx=Math.floor(proc*50);
+                    var tx=Math.floor(proc*BRICKWIDTH*0.5);
+                    var ty=Math.floor(proc*BRICKHEIGHT*0.5);
+                    img(crack, 
+                        sx, sx, 
+                        (1-proc)*100, (1-proc)*100, 
+                        xs + tx, ys + ty, 
+                        (1-proc)*BRICKWIDTH, (1-proc)*BRICKHEIGHT);
+                    
                     if(oblak.complete&&rsOblak){
-                        ctx.drawImage(oblak, (j * (BRICKWIDTH + PADDING)) + PADDING, (i * (BRICKHEIGHT + PADDING)) + PADDING + BRICKTOP, BRICKWIDTH, BRICKHEIGHT);
+                        ctx.drawImage(oblak, xs, ys, BRICKWIDTH, BRICKHEIGHT);
                     }
+                }
+                if(bricks[i][j].e==true){
+                    ring(xs+BRICKWIDTH/2,ys+BRICKHEIGHT/2, BRICKWIDTH/3, BRICKWIDTH/9);
                 }
             }
         }
-        var rowheight = BRICKHEIGHT + PADDING ;//öirina in viöina opek z paddingom
+        var rowheight = BRICKHEIGHT + PADDING ;//≈°irina in vi≈°ina opek z paddingom
         var colwidth = BRICKWIDTH + PADDING;
+        var sny = Math.sign(dy);
+        var snx = Math.sign(dx);
         
-        var cmy = (y - BRICKTOP - PADDING/2)%rowheight;
-        var row = (y - BRICKTOP + r - PADDING)/rowheight;
-        if(cmy<(PADDING/2-r)||cmy>(PADDING/2+BRICKHEIGHT+r)){row=-1;}else{row=Math.floor(row);}//Ëe je v paddingu ne zadene opeke
+        var cmy = (y - BRICKTOP - PADDING/2 + dy)%rowheight;
+        var row = (y - BRICKTOP - PADDING/2 + dy)/rowheight;
         
-        var cmx = (x - PADDING/2)%colwidth;
-        var col = (x + r - PADDING)/colwidth;
-        if(cmx<(PADDING/2-r)||cmx>(PADDING/2+BRICKWIDTH+r)){col=-1;}else{col=Math.floor(col);}
-        //»e smo zadeli opeko, vrni povratno kroglo in oznaËi v tabeli, da opeke ni veË
-        if (row < NROWS  && row >= 0 && col < NCOLS && col >= 0 && bricks[row][col].h > 0) {
-            if(cmx<(PADDING/2)&&Math.sign(dx)===1||
-                cmx>(PADDING/2+BRICKWIDTH)&&Math.sign(dx)===-1){
-                dx=-dx;//odbijaj tudi pri strani opeke
-            }else{
-                dy = -dy; 
-            }
-            tocke += bricks[row][col].v;
-            $("#tocke").html(tocke);
-            bricks[row][col].h -= 1;
+        var cmx = (x - BRICKLEFT - PADDING/2 + dx)%colwidth;
+        var col = (x - BRICKLEFT - PADDING/2 + dx)/colwidth;
+        //edges - dir of movement, corners - position
+        
+        
+        if(cmy<(PADDING/2-r)||cmy>(PADDING/2+BRICKHEIGHT+r)){
+            row=-1;
+        }else{
+            row=Math.floor(row);
+        }//ƒçe je v paddingu ne zadene opeke
+        if(cmx<(PADDING/2-r)||cmx>(PADDING/2+BRICKWIDTH+r)){
+            col=-1;
+        }else{
+            col=Math.floor(col);
+        }//ƒçe je v paddingu ne zadene opeke
+        var hit=0;
+        var ccx=cmx+dx-colwidth/2;
+        var ccy=cmy+dy-rowheight/2;
+        //for all dir (3)
+        //angle 8th root of sin cos of angle
+        //dist of cos snd sin + radius
+        //less than abs distance from center and ball
+        //bounce based on existance of brick
+        //rediract angle based on angle
+        var xcx=(snx==-1?-cmx-colwidth/2:colwidth-cmx+colwidth/2);//dist to brick
+        var xcy=(sny==-1?-cmy-rowheight/2:rowheight-cmy+rowheight/2);
+        //console.log(xcx+"  "+xcy);
+        var angl=Math.atan2(dx, dy);//+Math.PI/2;
+        var anglc=Math.atan2(xcx, xcy);//+Math.PI/2;
+        var anglx=Math.atan2(xcx, -cmy+rowheight/2);//+Math.PI/2;
+        var angly=Math.atan2(-cmx+colwidth/2, xcy);//+Math.PI/2;
+        //angl=(xcy<0)?angl+Math.PI:angl
+        var snc= Math.sqrt(Math.sqrt(Math.abs(Math.sin(anglc))));
+        var cnc= Math.sqrt(Math.sqrt(Math.abs(Math.cos(anglc))));
+        var bcdc= Math.sqrt(Math.pow(snc*rowheight/2,2)+Math.pow(cnc*colwidth/2,2));//distance to endge of brick
+        var abdc= Math.sqrt(Math.pow(xcy,2)+Math.pow(xcx,2));//absolute distance
+        
+        var sinx= Math.sqrt(Math.sqrt(Math.sqrt(Math.abs(Math.sin(anglx)))));
+        var cnx= Math.sqrt(Math.sqrt(Math.sqrt(Math.abs(Math.cos(anglx)))));
+        var bcdx= Math.sqrt(Math.pow(sinx*rowheight/2,2)+Math.pow(cnx*colwidth/2,2));//distance to endge of brick
+        var abdx= Math.sqrt(Math.pow(-cmy+rowheight/2,2)+Math.pow(xcx,2));//absolute distance
+        if(abdx-r<bcdx&&bounds(bricks, row, col+snx)&&bricks[row][col+snx].b!==0){
+            //console.log("xcol "+angl+" "+bcdx);
+            hitb(row, col+snx);
+            dx=-dx;
+        }else if(abdc-r<bcdc&&bounds(bricks, row+sny, col+snx)&&bricks[row+sny][col+snx].b!==0){
+            //console.log("ccol "+angl+" "+bcdc);
+            hitb(row+sny, col+snx);
+            var rfang = anglc-2*angl;
+            dx=dx*Math.cos(rfang);
+            dy=dy*Math.cos(rfang);
         }
+        var siny= Math.sqrt(Math.sqrt(Math.sqrt(Math.abs(Math.sin(anglx)))));
+        var cny= Math.sqrt(Math.sqrt(Math.sqrt(Math.abs(Math.cos(anglx)))));
+        var bcdy= Math.sqrt(Math.pow(siny*rowheight/2,2)+Math.pow(cny*colwidth/2,2));//distance to endge of brick
+        var abdy= Math.sqrt(Math.pow(xcy,2)+Math.pow(-cmx+colwidth/2,2));//absolute distance
+        if(abdy-r<bcdy&&bounds(bricks, row+sny, col)&&bricks[row+sny][col].b!==0){
+            //console.log("yhit "+angl+" "+bcdy);
+            hitb( row+sny, col);
+            dy=-dy;
+        }else if(abdc-r<bcdc&&bounds(bricks, row+sny, col+snx)&&bricks[row+sny][col+snx].b!==0){
+            //console.log("ccol "+angl+" "+bcdc);
+            hitb(row+sny, col+snx);
+            var rfang = anglc-2*angl;
+            dx=dx*Math.cos(rfang);
+            dy=dy*Math.cos(rfang);
+        }
+        var abdb= Math.sqrt(Math.pow(cmy-rowheight/2,2)+Math.pow(cmx-colwidth/2,2));//absolute distance
+        if(abdb-r<BRICKWIDTH/2.5&&bounds(bricks, row, col)&&bricks[row][col].e==true){
+            bricks[row][col].e=false;
+            numBalls++;
+        }
+        console.log(numBalls);
+        var scalr=Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+        var absp= sp/(scalr==0?1:scalr);
+        dx*=absp;
+        dy*=absp;
+        //console.log(dx+" "+dy+" "+x+" "+y);
+        
         
   
         if (x + dx > WIDTH-r || x + dx < 0+r){
             dx = -dx;
         }
-        if (y + dy < 0+r){
+        if (y + dy < 0+r/* || y + dy > HEIGHT-r*/){
             dy = -dy;
         }
-        else if(y + dy > HEIGHT-r-paddleh){
-            if (x > paddlex - r && x < paddlex + paddlew + r){
-                dx = 8 * ((x-(paddlex+paddlew/2))/paddlew);
-                dy = -dy;
-            }else{
-                clearInterval(intervalId);
-                document.querySelector("html").style.cursor="default";
-                playing=false;
-                x = 150;
-                y = 150;
-            }
+        else if(y + dy > HEIGHT-r+1){
+            waitPull();
         }
         x += dx;
         y += dy;
+        
+        if(grabing&&!flying){
+            beamset=true;
+            drawBeam(beamsep, {x:beampos.x,y:beampos.y}, beamangle);
+        }
     }
     
-
+    function pause(){
+        if(!playing)return;
+        if(paused){
+            paused=false;
+            $('#left').removeClass("pauza");
+            intTimer = setInterval(timer, 1000);
+            document.querySelector("html").style.cursor="grab";
+            intervalId = setInterval(draw, 10);
+        }else{
+            $('#left').addClass("pauza");
+            paused=true;
+            clearInterval(intervalId);
+            clearInterval(intTimer);
+            document.querySelector("html").style.cursor="default";
+            
+        }
+    }
+    
+    function end(){
+        clearInterval(intervalId);
+        clearInterval(intTimer);
+        paused=false;
+        $('#left').removeClass("pauza");
+        $('#pauza').off();
+        $("#koncaj").off();
+        $(document).off("keyup");
+        document.querySelector("html").style.cursor="default";
+        playing=false;
+        var sc = lc.getObj("scores");
+        console.log(sc);
+        sc.push({t:sekunde,s:tocke});
+        lc.setObj("scores",sc);
+    }
+    function waitPull(){
+        dx=0;
+        dy=0;
+        beampos={x:x,y:y};
+        beamset=false;
+        flying=false;
+        lvl++;
+        NROWS++;
+        genBricks(bricks, 1, 0.2,lvl, lvl);
+    }
 }
 
 
@@ -136,14 +309,15 @@ function drawIt() {
 
 
 document.addEventListener("DOMContentLoaded", (event) => {
-    playB=document.querySelector('#play');
-    playB.addEventListener("click", (event) => {
+    $('#play').on("click", (event) => {
         if(!playing){
             document.querySelector("html").style.cursor="grab";
             playing=true;
             drawIt();
         }
     });
+    
+    
     
 });
 

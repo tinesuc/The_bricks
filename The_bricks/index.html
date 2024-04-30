@@ -1,8 +1,10 @@
 <html>
 <head>
+    <meta charset="UTF-8">
     <title class="trs" trtxt="$title$">The Bricks</title>
     <link rel="stylesheet" href="css/main.css" type="text/css" media="all">
     <link rel="stylesheet" href="css/range.css" type="text/css" media="all">
+    <link rel="icon" type="image/x-icon" href="img/icon.png">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         playing=false;
@@ -14,23 +16,31 @@
 <body>
     <div id="title" ><h1 class="trs" trtxt="$title$">The Bricks</h1></div>
     <div id="main">
-        
-        <div id="left">
+        <div id="side">
+            <div id="timer-box">
+                <p>Čas:</p> 
+                    <mark id="cas">00:00</mark>
+
+            </div>
             <div id="tocke-box">
-                <p>To�ke: </p>
+                <p>Točke: </p>
                 <mark id="tocke">0</mark>
             </div>
-            <div id="brick-box">
-                <canvas id="canvas" width="800" height="800"></canvas>
+        </div>
+        <div id="core">
+            <div id="left">
+                <div id="brick-box">
+                    <canvas id="canvas" width="500" height="800"></canvas>
+                </div>
+            </div>
+            <div id="right">
+                    <button id="koncaj" class="trs" trtxt="$koncaj$">Končaj</button>
+                    <button id="play" class="trs" trtxt="$play$">Igraj</button>
+                    <button id="pauza" class="trs" trtxt="$pauza$">Pauza</button>
+
+
             </div>
         </div>
-        <div id="right">
-                <button id="play" class="trs" trtxt="$play$">Play</button>
-               
-                
-        </div>
     </div>
-    
-    
 </body>
 </html>

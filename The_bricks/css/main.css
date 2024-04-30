@@ -57,6 +57,20 @@ span.animate{
 }
 #main{
     display: flex;
+    min-height: min-content;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+#side{
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+}
+#core{
+    display: flex;
     justify-content: flex-start;
     min-height: min-content;
     flex-direction: column;
@@ -68,6 +82,19 @@ span.animate{
     display: flex;
     justify-content: center;
 }
+#left.pauza::after {
+    content: "Pauza";
+    position: absolute;
+    color: white;
+    /* top: 40%; */
+    font-size: 5rem;
+    line-height: 700px;
+    background-color: #7d7d7d4f;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+}
 #brick-box{
     position: relative;
 }
@@ -78,7 +105,7 @@ span.animate{
     display: flex;
     justify-content: center;
 }
-#regen,#play,#solve,#help{
+#koncaj,#play,#pauza,#help{
     width: fit-content;
     min-width: 7rem;
     padding: 3px 6px;
@@ -193,18 +220,18 @@ li input[type="number"]{
     position:absolute;
     top:1000%;
 }
-#tocke-box{
+#tocke-box,#timer-box{
     display: flex;
     height: fit-content;
     color: #e36b00;
-    position: absolute;
     left: -120px;
     top: 10px;
     font-size: 1.9rem;
     flex-direction: column;
     text-align: center;
+    margin-bottom: 10px;
 }
-#tocke{
+#tocke,#cas{
     background-image: radial-gradient(#ff9900 0%, #0000ff00 80%);
     background-color: #ffffff00;
     color: white;
