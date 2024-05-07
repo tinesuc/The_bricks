@@ -220,7 +220,7 @@ li input[type="number"]{
     position:absolute;
     top:1000%;
 }
-#tocke-box,#timer-box{
+#tocke-box,#timer-box,#top-box{
     display: flex;
     height: fit-content;
     color: #e36b00;
@@ -231,7 +231,7 @@ li input[type="number"]{
     text-align: center;
     margin-bottom: 10px;
 }
-#tocke,#cas{
+#tocke,#cas, #topt{
     background-image: radial-gradient(#ff9900 0%, #0000ff00 80%);
     background-color: #ffffff00;
     color: white;

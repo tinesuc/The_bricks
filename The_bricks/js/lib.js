@@ -2,7 +2,7 @@ x = 0;//zogica in canvas
 y = 0;
 dx = 0;
 dy = 0;
-bl =[{x:0,y:0,dx:0,dy:0}];
+bl =[{x:0,y:0,dx:0,dy:0, s:false, c:false}];
 sp=2.3;
 WIDTH = 0;
 HEIGHT = 0;
@@ -49,6 +49,7 @@ beampos={x:0,y:0};
 beamsep=0;
 beamset=false;
 flying=false;
+first=false;
 Storage.prototype.setObj = function(key, obj) {
     return this.setItem(key, JSON.stringify(obj));
 }
