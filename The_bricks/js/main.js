@@ -86,6 +86,7 @@ function drawIt() {
         BRICKWIDTH = (WIDTH / NCOLS - PADDING) - 1;
         BRICKHEIGHT = BRICKWIDTH;
         BRICKTOP = 20;
+        maxrows = Math.floor((HEIGHT-BRICKTOP)/BRICKHEIGHT);
         BRICKLEFT = (WIDTH - (BRICKWIDTH + PADDING) * NCOLS) / 2;
         rsOblak = false;
         bricks = [];
@@ -358,8 +359,16 @@ function nexb(i){
         $(document).off("keyup");
         document.querySelector("html").style.cursor = "default";
         playing = false;
+        first=false;
+        numBalls=1;
         var sc = lc.getObj("scores");
-        $("#topt").html(Math.max(...sc.s));
+        var mxtck=0;
+        var sc = lc.getObj("scores");
+        for (var i = 0; i < sc.length; i++) {
+            mxtck = Math.max(mxtck, sc[i].s);
+        }
+        $("#topt").html(mxtck);
+        //$("#topt").html(Math.max(...sc.s));
         //console.log(sc);
         sc.push({t: sekunde, s: tocke});
         lc.setObj("scores", sc);
@@ -384,6 +393,10 @@ function nexb(i){
         if(ends){
             lvl++;
             NROWS++;
+            if(NROWS>=maxrows){
+                end();
+                return ;
+            }
             genBricks(bricks, 1, 0.2, lvl, lvl);
             for (var i = 0; i < bl.length; i++) {
                 bl[i].c=false;
