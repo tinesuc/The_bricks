@@ -1,0 +1,293 @@
+:root{
+	--scale:1.1;
+    --zoom:1;
+    --aspect:16/9;
+}
+*{
+	margin:0;
+	padding:0;
+	box-sizing: border-box;
+	font-family: Roboto;
+    user-select:none;
+}
+html{
+    overflow: hidden;
+    background-color: #000000;
+}
+span.req{
+    color:#f27474
+}
+h1{
+    line-height:4rem;
+    font-size:3rem;
+    text-align: center;
+    height: 4rem;
+     color: #e36b00;
+}
+/*.folded_input .info_item > .input{
+    min-width:10ch !important;
+}*/
+span, label{
+    user-select:text;
+}
+ul{
+    --inpw:15rem;
+	list-style-type:none;
+    scrollbar-color:rgb(0 0 0 / 0);
+    position: relative;
+    width: var(--inpw);
+        overflow: hidden;
+}
+
+span.animate{
+	animation: leftright 2s infinite alternate ease-in-out;
+    
+}
+@keyframes leftright {
+  0%,
+  10% {
+    transform: translateX(0%);
+    left: 0%;
+  }
+  80%,
+  100% {
+    transform: translateX(-100%);
+    left: 100%;
+  }
+}
+#main{
+    display: flex;
+    min-height: min-content;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+#side{
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+}
+#core{
+    display: flex;
+    justify-content: flex-start;
+    min-height: min-content;
+    flex-direction: column;
+    align-items: center;
+}
+#left{
+    POSITION:RELATIVE;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+#left.pauza::after {
+    content: "Pauza";
+    position: absolute;
+    color: white;
+    /* top: 40%; */
+    font-size: 5rem;
+    line-height: 700px;
+    background-color: #7d7d7d4f;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+}
+#brick-box{
+    position: relative;
+}
+#right{
+    min-height: 6rem;
+    padding: 10px 0;
+    width:50%;
+    display: flex;
+    justify-content: center;
+}
+#koncaj,#play,#pauza,#help{
+    width: fit-content;
+    min-width: 7rem;
+    padding: 3px 6px;
+    font-size: 1.45rem;
+    height: 3rem;
+    margin-right: 0.7rem;
+    background-color: #b3b3b3;
+    border-radius: 2px;
+    color: #e36b00;
+    border: 2px solid #d5d5d5;
+}
+#regen,#play{
+    margin-left: 0%;
+}
+#help-div{
+    justify-content: center;
+}
+#help{
+    min-width:10.7rem;
+}
+li{
+    padding:3px 6px 3px 0;
+    font-size:1.1rem;
+    display:flex;
+    width: 100%;
+    flex-direction: column;
+    position:relative;
+    margin: 0.7rem 0.7rem 0 0;
+    float: left;
+}
+li > div:has(#regen){
+    flex-direction: row;
+    justify-content: space-between;
+    width: var(--inpw);
+}
+li > div{
+    display: flex;
+    height: 36px;
+    color: #dcdc38;
+}
+li > div.br > span:first-child{
+    position: absolute;
+    right: 102%;
+    margin-top: 5px
+}
+li > div.br > span:last-child{
+    position: absolute;
+    left: 132px;
+    margin-top: 5px
+}
+li:not(:has(*)){
+    margin: 0 0 0 40%;
+}
+li > span.br:first-child{
+    margin: auto 6px auto 0px;
+    flex: 1;
+    text-align: right;
+}
+li > span.br:last-child{
+    margin: auto 0px auto 6px;
+    flex: 1;
+}
+li > div.ttl{
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    height: unset;
+    left: 3%;
+    pointer-events: none;
+    width: 100%;
+}
+li:has(input[type="number"]) > div.ttl{
+    top: 7px;
+}
+li > div:not(.br){
+    display: flex;
+}
+li > div:not(.br) > span{
+    align-self: flex-end;
+}
+li input{
+    margin:auto 0;
+    left: 1px;
+    position: absolute;
+    background-color: #00000000;
+}
+li input[type="number"]{
+    left: 0px;
+    width:var(--inpw);
+    height: 28px;
+    font-size: 0.85rem;
+    text-align: end;
+    background-color: #0033ff;
+    border: 0;
+    border-radius: 2px;
+    color: #f4f400;
+    border:2px solid #2053ff;
+}
+:focus-visible{
+    outline: none;
+}
+
+#brick-play{
+    display:flex;
+    justify-content: center;
+}
+#canvas{
+    border: 3px solid #b3b3b380;
+    border-radius: 4px;
+}
+#p1{
+    position:absolute;
+    top:1000%;
+}
+#tocke-box,#timer-box,#top-box{
+    display: flex;
+    height: fit-content;
+    color: #e36b00;
+    left: -120px;
+    top: 10px;
+    font-size: 1.9rem;
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: 10px;
+}
+#tocke,#cas, #topt{
+    background-image: radial-gradient(#ff9900 0%, #0000ff00 80%);
+    background-color: #ffffff00;
+    color: white;
+    height: 4rem;
+    line-height: 4rem;
+}
+
+
+.switch-toggle {
+    --hrt:2px;
+    --hgt:16px;
+    background: #00156b;
+    border-radius: var(--hrt);
+    width: fit-content;
+    display: inline-flex;
+    right: 0;
+    /*position: absolute;*/
+    height:calc(var(--hgt)*2);
+}
+.switch-toggle input {
+    display: none;
+    opacity: 0;
+}
+.switch-toggle input + label {
+    padding: var(--hgt) calc(var(--hgt)/2 + 8px);
+    color: #fff;
+    cursor: pointer;
+    line-height: 0;
+    font-family: "Twemoji Country Flags", "Helvetica", "Comic Sans", serif;
+}
+.switch-toggle input:checked + label {
+    background: #dcdc38;
+}
+.switch-toggle label:last-of-type {
+    border-end-end-radius: var(--hrt);
+    border-start-end-radius: var(--hrt);
+}
+.switch-toggle label:first-of-type {
+    border-start-start-radius: var(--hrt);
+    border-end-start-radius: var(--hrt);
+}
+
+
+/*
+div:where(.swal2-container) .swal2-html-container{
+    text-align:left !important;
+}
+*/
+
+
+/*
+https://css-tricks.com/webkit-image-wipes/
+https://www.quirksmode.org/css/images/colorstops.html
+https://www.quirksmode.org/css/images/position.html
+https://css-tricks.com/css3-gradients/
+
+
+https://snorpey.github.io/distort-grid/
+*/
