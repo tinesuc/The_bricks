@@ -50,6 +50,7 @@ beamsep=0;
 beamset=false;
 flying=false;
 first=false;
+maxrows=0;
 Storage.prototype.setObj = function(key, obj) {
     return this.setItem(key, JSON.stringify(obj));
 }
