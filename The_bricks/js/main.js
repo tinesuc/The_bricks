@@ -75,13 +75,13 @@ function drawIt() {
         }
         clear();
         
-        for(var i=0;i<bl.length;i++){
-            x=bl[i].x;
-            y=bl[i].y;
-            dx=bl[i].dx;
-            dy=bl[i].dy;
+        //for(var i=0;i<bl.length;i++){
+       //     x=bl[i].x;
+        //    y=bl[i].y;
+       //     dx=bl[i].dx;
+        //    dy=bl[i].dy;
             
-        }
+       // }
         circle(x, y, r,"#8080a0");
         
 //        var fx =-100;
